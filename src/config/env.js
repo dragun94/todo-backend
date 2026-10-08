@@ -3,5 +3,5 @@ require('dotenv').config({ path: path.resolve(__dirname, '../../.env'), quiet: t
 
 module.exports = {
   port: 5000,
-  mongoUri: process.env.MONGODB_URI,
+  mongoUri: process.env.MONGO_URI || process.env.MONGODB_URI,
 };
