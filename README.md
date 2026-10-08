@@ -71,3 +71,21 @@ const result = await app.locals.todos.insertOne(createTodoDocument('장보기'))
 
 앞뒤 공백을 제거한 제목이 1~500자인 경우 저장합니다. 제목 누락, 공백만 있는 제목, 문자열이 아닌 제목, 길이 초과 또는 잘못된 JSON에는 `400`을 반환합니다. 저장 실패에는 `500`을 반환합니다. 오류 응답 형식은 `{ "error": "오류 메시지" }`입니다. 완료 여부와 날짜는 서버에서 설정합니다.
 
+
+## 프런트엔드 연결과 전체 API
+
+`../todo-firebase/index.html` 화면은 `todo-db.js`를 통해 `http://localhost:5000/todos`로 요청합니다. 백엔드에서 `npm start`를 실행한 후 화면을 열면 됩니다. 로컬 정적 서버와 파일 직접 열기를 위한 CORS 처리를 제공합니다.
+
+| 작업 | 메서드 | 경로 | 성공 응답 |
+| --- | --- | --- | --- |
+| 목록 조회 | GET | `/todos` | 200, 할 일 배열 |
+| 개별 조회 | GET | `/todos/:id` | 200, 할 일 객체 |
+| 추가 | POST | `/todos` | 201, 생성된 할 일 |
+| 내용·완료 수정 | PATCH | `/todos/:id` | 200, 수정된 할 일 |
+| 삭제 | DELETE | `/todos/:id` | 204, 본문 없음 |
+
+수정 본문은 `{ "title": "수정 내용" }`, `{ "completed": true }` 또는 두 필드를 함께 보낼 수 있습니다. 수정 시 `updatedAt`도 갱신합니다. 잘못된 ID·입력은 400, 없는 할 일은 404, DB 오류는 500입니다. 목록은 최신 생성순으로 반환합니다. 기존 Supabase 및 localStorage 데이터는 자동 이전하지 않습니다.
+
+## 브라우저에서 화면 열기
+
+`node index.js` 또는 `npm start`로 실행한 후 `http://localhost:5000`을 열면 `../todo-firebase/index.html` 화면이 표시됩니다. 화면의 CSS와 JavaScript도 같은 서버에서 제공합니다. `/todos`는 기존 할 일 API입니다. 코드 변경 후에는 실행 중인 서버를 종료하고 다시 실행하세요.

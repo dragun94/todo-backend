@@ -1,4 +1,6 @@
 ﻿const express = require('express');
+const frontendRouter = require('./middleware/frontend');
+const localCors = require('./middleware/local-cors');
 const todosRouter = require('./modules/todos/todo.routes');
 const errorHandler = require('./middleware/error-handler');
 
@@ -6,13 +8,14 @@ function createApp({ db, todos } = {}) {
   const app = express();
   app.locals.db = db;
   app.locals.todos = todos;
+  app.use(localCors);
   app.use(express.json());
   app.use('/todos', todosRouter);
-  app.get('/', (req, res) => {
-    res.send('Todo backend server is running.');
-  });
+  app.use(frontendRouter);
   app.use(errorHandler);
   return app;
 }
 
 module.exports = { createApp };
+
+

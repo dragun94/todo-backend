@@ -24,4 +24,25 @@ async function insertTodo(collection, todo) {
   return { ...todo, _id: result.insertedId };
 }
 
-module.exports = { initializeTodos, insertTodo };
+async function listTodos(collection) {
+  return collection.find({}).sort({ createdAt: -1, _id: -1 }).toArray();
+}
+
+async function findTodo(collection, id) {
+  return collection.findOne({ _id: id });
+}
+
+async function updateTodo(collection, id, changes) {
+  return collection.findOneAndUpdate(
+    { _id: id },
+    { $set: { ...changes, updatedAt: new Date() } },
+    { returnDocument: 'after', includeResultMetadata: false }
+  );
+}
+
+async function deleteTodo(collection, id) {
+  return collection.findOneAndDelete({ _id: id }, { includeResultMetadata: false });
+}
+
+module.exports = { initializeTodos, insertTodo, listTodos, findTodo, updateTodo, deleteTodo };
+
